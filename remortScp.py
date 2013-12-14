@@ -2,7 +2,6 @@
 
 __version__ = "1.0"
 __author__ = "ashokr@yahoo-inc.com"
-__copyright__ = "(C) 2010 Yahoo! Inc.  All rights reserved."
 
 
 ### import modules ###
@@ -70,7 +69,7 @@ if __name__ == '__main__':
 
 	# check if the Source & Target hosts count are the same
 	if dstHostCount == srcHostCount:
-		
+
 		# For each Target Host open netcat listner and file tranfer netcat client in the respective Source Host
 		for i in range(0, dstHostCount):
 
