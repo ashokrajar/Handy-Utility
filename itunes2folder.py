@@ -1,172 +1,156 @@
-#! /usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 ### import modules ###
+import os
+import sys
+import shutil
+from time import sleep
+import argparse
 from xml.etree import ElementTree
 from progressbar import ProgressBar, SimpleProgress
-import os, sys, shutil
-from optparse import OptionParser
-from time import sleep
-
 
 
 # method to decode filename
-def decodeFileName(fileName):
-	'''decode the given fileName to ASCII Character
+def decode_file_name(filename):
+    """decode the given fileName to ASCII Character
 
-	return decoded string'''
-	
-	name = fileName.replace('%20', ' ')		# decode the spaces
-	name = name.replace('%5B', '[')			# decode the [
-	name = name.replace('%5D', ']')			# decode the ]
+    return decoded string"""
 
-	return name
+    name = filename.replace('%20', ' ')        # decode the spaces
+    name = name.replace('%5B', '[')            # decode the [
+    name = name.replace('%5D', ']')            # decode the ]
+
+    return name
 
 
 # method to index the Library
-def indexTracks(itunesLibrary):
-	'''returns a dictionary [trackid : file_location]'''
+def index_tracks(itunesLibrary):
+    '''returns a dictionary [trackid : file_location]'''
 
-	trackDict = {}
-	
-	# find all the tracks element
-	trackList = itunesLibrary.findall('dict/dict/dict')
+    trackdict = { }
 
-	# Iterate through each track element and create a dictionary [trackid : file_location]
-	for track in trackList:
-		# get the trackid
-		iterElememt = list(track.iter('integer'))
-		trackId = iterElememt[0].text
+    # find all the tracks element
+    tracklist = itunesLibrary.findall('dict/dict/dict')
 
-		# get the track location
-		iterElememt = list(track.iter('string'))
-		trackPath = iterElememt[-1].text
+    # Iterate through each track element and create a dictionary [trackid : file_location]
+    for track in tracklist:
+        # get the trackid
+        iterelememt = list(track.iter('integer'))
+        trackid = iterelememt[0].text
 
-		# Build the dictionary
-		trackDict[trackId] = trackPath
+        # get the track location
+        iterelememt = list(track.iter('string'))
+        trackpath = iterelememt[-1].text
 
-	return trackDict
+        # Build the dictionary
+        trackdict[trackid] = trackpath
+
+    return trackdict
+
 
 # method to get list of absolute file path for the given playlist name
-def getFilePath(itunesLibrary, trackIndex, searchStr):
-	'''returns absolute filepath as a list fetching it from the trackIndex'''
+def get_file_path(ituneslibrary, trackindex, searchstr):
+    """returns absolute filepath as a list fetching it from the trackIndex"""
 
-	fileList = []
-	# fetch all file list form the playlists
-	playLists = itunesLibrary.findall('dict/array/dict')
+    filelist = []
+    # fetch all file list form the playlists
+    playlists = ituneslibrary.findall('dict/array/dict')
 
-	# Iterate through each playlist
-	for playList in playLists:
-		# Get the playlist name form the string element
-		iterElement = list(playList.iter('string'))
-		playListName = iterElement[0].text
+    # Iterate through each playlist
+    for playlist in playlists:
+        # Get the playlist name form the string element
+        iterelement = list(playlist.iter('string'))
+        playlistname = iterelement[0].text
 
-		# if playlist match the given playlist
-		if playListName == searchStr:
+        # if playlist match the given playlist
+        if playlistname == searchstr:
 
-			# Search for all the Tracks in the given playlist
-			trackLists = list(playList.iter('integer'))
-			trackLists.pop(0)
-			# Iterate through the result element list to fetch the track id to fetch the track file path
-			for track in trackLists:
-				# Get the trackid from the playlist
-				trackId = track.text
-				# fetch the file path form the index with the trackid
-				filePath = trackIndex[trackId]
-				filePath = filePath.replace('file://localhost','')		# get the absolute path
-				filePath = decodeFileName(filePath)						# decode the filename
-				# append th filepath to the list
-				fileList.append(filePath)
+            # Search for all the Tracks in the given playlist
+            tracklists = list(playlist.iter('integer'))
+            tracklists.pop(0)
+            # Iterate through the result element list to fetch the track id to fetch the track file path
+            for track in tracklists:
+                # Get the trackid from the playlist
+                trackid = track.text
+                # fetch the file path form the index with the trackid
+                filepath = trackindex[trackid]
+                filepath = filepath.replace('file://localhost', '')        # get the absolute path
+                filepath = decode_file_name(filepath)                        # decode the filename
+                # append th filepath to the list
+                filelist.append(filepath)
 
-	return fileList
+    return filelist
 
 
-# method to copy file from source to destination 
-def syncFileToDest(sourceFiles, destFolder):
-	'''copies to the destination folder if file doesn't exit
+# method to copy file from source to destination
+def sync_file_to_dest(sourcefiles, destfolder):
+    """copies to the destination folder if file doesn't exit
 
-	return True on success'''
+    return True on success"""
 
-	for sourceFile in sourceFiles:
-		
-		fileName = sourceFile.split('/')[-1]		# split file name from absolute path
+    for sourcefile in sourcefiles:
 
-		# check if the file doesn't exist on the destination
-		if not os.path.isfile(destFolder + '/' + fileName):
-			# copy file to destination
-			try:
-				shutil.copy(sourceFile, destFolder)
-			except IOError, e:
-				print "Sync Failed : ", e
-				sys.exit(1)
-			except KeyboardInterrupt:
-				print "Sync Stopped by a Human"
-				sys.exit(1)
-			else:
-				print "Synced : ", fileName
+        filename = sourcefile.split('/')[-1]        # split file name from absolute path
 
-	return True
+        # check if the file doesn't exist on the destination
+        if not os.path.isfile(destfolder + '/' + filename):
+            # copy file to destination
+            try:
+                shutil.copy(sourcefile, destfolder)
+            except IOError, e:
+                print "Sync Failed : ", e
+                sys.exit(1)
+            except KeyboardInterrupt:
+                print "Sync Stopped by a Human"
+                sys.exit(1)
+            else:
+                print "Synced : ", filename
 
+    return True
+
+
+cmdParser.add_argument('--version', action='version', version='%(prog)s 1.1')
+    optionGroup = cmdParser.add_argument_group('General Options')
+    optionGroup.add_argument('--outfolder', help='Destination folder to copy the files')
 
 ### Main Code ###
 if __name__ == '__main__':
 
-	# Command Line Arguments Parser
-	cmdParser = OptionParser(version = "%prog " + "0.1")
-	cmdParser.add_option("-p", "--playlist", action = "store", type = "str", dest = "playList", help = "Name of the Play List")
-	cmdParser.add_option("-d", "--dest", action = "store", type = "str", dest = "destFolder", help = "Absolute Destination Folder Path to Sync Music")
-	(cmdOptions, cmdArgs) = cmdParser.parse_args()
-
-	# Check cmd arguments
-	if not (cmdOptions.playList and cmdOptions.destFolder):
-		cmdParser.print_help()
-		sys.exit(1)
-
-	playList = cmdOptions.playList
-	destFolder = cmdOptions.destFolder
-
-	# iTunes Library Path
-	itunesLibFile = os.getenv('HOME') + "/Music/iTunes/iTunes Music Library.xml"
-
-	# Check if file exists
-	if os.path.isfile(itunesLibFile):
-		# Spawn a separate process to parse
-		print "Processing iTunes Library ....."
-		itunesLibrary = ElementTree.parse(itunesLibFile)
-	else:
-		print "Error : iTunes Library not Found"
-		sys.exit(1)
-
-	# Beautify with progress bars
-	# while(process.is_alive() == True):
-	# 	for I in range(2):
-	# 		sys.stdout.write("(|)\r")
-	# 		sys.stdout.flush()
-	# 		sleep(0.1)
-	# 		sys.stdout.write("(/)\r")
-	# 		sys.stdout.flush()
-	# 		sleep(0.1)
-	# 		sys.stdout.write("(-)\r")
-	# 		sys.stdout.flush()
-	# 		sleep(0.1)
-	# 		sys.stdout.write("(\\)\r")
-	# 		sys.stdout.flush()
-	# 		sleep(0.1)
-
-	# recieve and store the parsed object
-	# itunesLibrary = parent_conn.recv()
-	# join the process
-	# process.join()
-
-	# index the library as a key value pair
-	# dictionary [trackid : file_location]
-	trackIndex = indexTracks(itunesLibrary)
-
-	# get list of absolute file path for the given playlist name
-	fileList = getFilePath(itunesLibrary, trackIndex, playList)
-
-	# copy to destination
-	print("Syncing Music to %s" % destFolder) 
-	syncFileToDest(fileList, destFolder)
-		
 
 
+    # cmdArgs = cmdParser.parse_args()
+
+
+    print cmdParser.parse_args(['--help'])
+
+    # # Check cmd arguments
+    # if not (cmdOptions.playList and cmdOptions.destFolder):
+    #     cmdParser.print_help()
+    #     sys.exit(1)
+    #
+    # playList = cmdOptions.playList
+    # destFolder = cmdOptions.destFolder
+    #
+    # # iTunes Library Path
+    # itunesLibFile = os.getenv('HOME') + "/Music/iTunes/iTunes Music Library.xml"
+    #
+    # # Check if file exists
+    # if os.path.isfile(itunesLibFile):
+    #     # Spawn a separate process to parse
+    #     print "Processing iTunes Library ....."
+    #     itunesLibrary = ElementTree.parse(itunesLibFile)
+    # else:
+    #     print "Error : iTunes Library not Found"
+    #     sys.exit(1)
+    #
+    # # index the library as a key value pair
+    # # dictionary [trackid : file_location]
+    # trackIndex = index_tracks(itunesLibrary)
+    #
+    # # get list of absolute file path for the given playlist name
+    # fileList = get_file_path(itunesLibrary, trackIndex, playList)
+    #
+    # # copy to destination
+    # print("Syncing Music to %s" % destFolder)
+    # sync_file_to_dest(fileList, destFolder)
