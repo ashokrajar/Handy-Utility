@@ -1,0 +1,9 @@
+sqlalchemy
+facebook-sdk
+mutagen
+click
+xmltodict
+humanize
+tabulate
+boto
+requests
