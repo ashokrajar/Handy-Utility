@@ -14,6 +14,7 @@ Options:
 from __future__ import print_function
 import sys
 import os
+import zipfile
 
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
@@ -24,12 +25,12 @@ def fetch_mp3_files(folder):
     """
     Search for MP3 files under the directory and return a MP3 file list
 
-    @param folder:
-    @type folder: string
-    @return:
-    @rtype: list
+    Args:
+        folder (str): Absolute path to folder
+
+    Returns:
+        list: List of files
     """
-    global file_list
     file_list = []
     if os.path.isdir(folder):
         for file_name in os.listdir(folder):
@@ -46,10 +47,9 @@ def update_metadata(folder, composer):
     """
     Update the ID3 composer tag
 
-    @param folder:
-    @type folder: string
-    @param composer:
-    @type composer: string
+    Args:
+        folder (str): Absolute path to folder
+        composer (str): Composer name
     """
     for mp3_file in fetch_mp3_files(folder):
         song = MP3(mp3_file, ID3=EasyID3)
@@ -74,8 +74,8 @@ def strip_filename_sufix(folder):
     Search for MP3 files under the directory
     Strip unwanted text from mp3 file name.
 
-    @param folder:
-    @type folder: string
+    Args:
+        folder (str): Absolute path to folder
     """
     # strip '-VmusiQ.Com' from file name
     for mp3_file in fetch_mp3_files(folder):
@@ -83,7 +83,7 @@ def strip_filename_sufix(folder):
             new_filename = mp3_file[:-18] + ".mp3"
             os.rename(mp3_file, new_filename)
         elif mp3_file.endswith("-VmusiQ.Com.mp3"):
-            new_filename = mp3_file[:-16] + ".mp3"
+            new_filename = mp3_file[:-15] + ".mp3"
             os.rename(mp3_file, new_filename)
 
 
@@ -97,6 +97,10 @@ def strip_filename_sufix(folder):
 def main(folder, composer):
     """
     MP3 files MetaData(ID3 Tags) updater
+
+    Args:
+        folder (str): Absolute path to folder
+        composer (str): Composer name
     """
     update_metadata(folder, composer)
     strip_filename_sufix(folder)

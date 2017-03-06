@@ -1,9 +1,3 @@
-sqlalchemy
-facebook-sdk
-mutagen
-click
-xmltodict
-humanize
-tabulate
-boto
-requests
+mutagen==1.31
+click==6.2
+paramiko==1.16.0
