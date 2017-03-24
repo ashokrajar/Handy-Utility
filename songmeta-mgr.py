@@ -43,6 +43,19 @@ def fetch_mp3_files(folder):
     return file_list
 
 
+def list_metadata(folder):
+    """
+    LIst the ID3 composer tag
+
+    Args:
+        folder (str): Absolute path to folder
+    """
+    for mp3_file in fetch_mp3_files(folder):
+        song = MP3(mp3_file, ID3=EasyID3)
+
+        print(song.tags)
+
+
 def update_metadata(folder, composer):
     """
     Update the ID3 composer tag
@@ -66,6 +79,7 @@ def update_metadata(folder, composer):
         song.tags['performer'] = composer
         song.tags['conductor'] = composer
         song.tags['composer'] = composer
+        song.tags['genre'] = ""
         song.save()
 
 
@@ -102,6 +116,7 @@ def main(folder, composer):
         folder (str): Absolute path to folder
         composer (str): Composer name
     """
+    # list_metadata(folder)
     update_metadata(folder, composer)
     strip_filename_sufix(folder)
 
