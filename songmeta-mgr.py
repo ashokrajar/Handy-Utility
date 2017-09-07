@@ -67,11 +67,14 @@ def update_metadata(folder, composer):
     for mp3_file in fetch_mp3_files(folder):
         song = MP3(mp3_file, ID3=EasyID3)
 
-        # strip '-StarMusiq.Com'
         song_title = song.tags['title']
-        if song_title[0].endswith("StarMusiQ.Com"):
+        # strip '-5StarMusiq.Com'
+        if song_title[0].endswith("5StarMusiQ.Com"):
+            song.tags['title'] = song_title[0][:-15]
+        # strip '-StarMusiq.Com'
+        elif song_title[0].endswith("StarMusiQ.Com"):
             song.tags['title'] = song_title[0][:-14]
-            # strip '-VmusiQ.Com'
+        # strip '-VmusiQ.Com'
         elif song_title[0].endswith("-VmusiQ.Com"):
             song.tags['title'] = song_title[0][:-12]
 
@@ -79,6 +82,7 @@ def update_metadata(folder, composer):
         song.tags['performer'] = composer
         song.tags['conductor'] = composer
         song.tags['composer'] = composer
+        song.tags['albumartist'] = composer
         song.tags['genre'] = ""
         song.save()
 
