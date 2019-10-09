@@ -77,6 +77,10 @@ def update_metadata(folder, composer):
         # strip '-VmusiQ.Com'
         elif song_title[0].endswith("-VmusiQ.Com"):
             song.tags['title'] = song_title[0][:-12]
+        elif song_title[0].endswith("-StarMusiQ.One"):
+            song.tags['title'] = song_title[0][:-14]
+        elif song_title[0].endswith("-StarMusiQ.Fun"):
+            song.tags['title'] = song_title[0][:-14]
 
         # insert the composer
         song.tags['performer'] = composer
@@ -97,11 +101,20 @@ def strip_filename_sufix(folder):
     """
     # strip '-VmusiQ.Com' from file name
     for mp3_file in fetch_mp3_files(folder):
-        if mp3_file.endswith("StarMusiQ.Com.mp3"):
+        if mp3_file.endswith("5StarMusiQ.Com.mp3"):
+            new_filename = mp3_file[:-19] + ".mp3"
+            os.rename(mp3_file, new_filename)
+        elif mp3_file.endswith("StarMusiQ.Com.mp3"):
             new_filename = mp3_file[:-18] + ".mp3"
             os.rename(mp3_file, new_filename)
         elif mp3_file.endswith("-VmusiQ.Com.mp3"):
             new_filename = mp3_file[:-15] + ".mp3"
+            os.rename(mp3_file, new_filename)
+        elif mp3_file.endswith("-StarMusiQ.One.mp3"):
+            new_filename = mp3_file[:-18] + ".mp3"
+            os.rename(mp3_file, new_filename)
+        elif mp3_file.endswith("-StarMusiQ.Fun.mp3"):
+            new_filename = mp3_file[:-18] + ".mp3"
             os.rename(mp3_file, new_filename)
 
 

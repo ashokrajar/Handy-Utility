@@ -1,0 +1,23 @@
+#!/bin/bash
+
+remotehost=$1
+remotedir=$2
+localdir=$3
+
+
+if [[ $# -lt 3 ]]
+  then
+    echo "USAGE: $# <remote host> <remote dir> <local dir>"
+    echo
+    exit 1
+fi
+
+logger "INFO: rsync'ng ${remotehost}:${remotedir} to ${localdir}/${remotehost}"
+rsync -va --delete ${remotehost}:${remotedir} ${localdir}/${remotehost}
+if [ $? -eq 0 ]
+  then
+    logger "INFO: rsync backup of ${remotehost}:${remotedir} to ${localdir}/${remotehost} complete"
+else
+
+    logger "ERROR: rsync backup of ${remotehost}:${remotedir} to ${localdir}/${remotehost}"
+fi

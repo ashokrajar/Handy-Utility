@@ -1,0 +1,57 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "324af8c00d3693fb32957061a2b91cacca3dc9993c7cbfca55ef8228db6f75f2"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.7"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "click": {
+            "hashes": [
+                "sha256:bbb49b513a663b9d93139b1ddadfa866edb41982d8b1c7b79a81f47e279bdb72",
+                "sha256:fba0ff70f5ebb4cebbf64c40a8fbc222fb7cf825237241e548354dabe3da6a82"
+            ],
+            "index": "pypi",
+            "version": "==6.2"
+        },
+        "ecdsa": {
+            "hashes": [
+                "sha256:40d002cf360d0e035cf2cb985e1308d41aaa087cbfc135b2dc2d844296ea546c",
+                "sha256:64cf1ee26d1cde3c73c6d7d107f835fed7c6a2904aef9eac223d57ad800c43fa"
+            ],
+            "version": "==0.13"
+        },
+        "mutagen": {
+            "hashes": [
+                "sha256:0aa011707785fe30935d8655380052a20ba8b972aa738d4f144c457b35b4d699"
+            ],
+            "index": "pypi",
+            "version": "==1.31"
+        },
+        "paramiko": {
+            "hashes": [
+                "sha256:3297ebd3cd072f573772f7c7426939a443c62c458d54bb632ff30fd6ecf96892",
+                "sha256:4ea4b9dd79beabd0301277a26d5e8b54ab8f41ed12414a35f1e00ae08cf06127"
+            ],
+            "index": "pypi",
+            "version": "==1.16.0"
+        },
+        "pycrypto": {
+            "hashes": [
+                "sha256:f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"
+            ],
+            "version": "==2.6.1"
+        }
+    },
+    "develop": {}
+}
