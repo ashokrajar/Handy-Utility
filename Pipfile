@@ -8,7 +8,7 @@ verify_ssl = true
 [packages]
 mutagen = "==1.31"
 click = "==6.2"
-paramiko = "==2.0.9"
+paramiko = "==2.10.1"
 
 [requires]
 python_version = "3.7"
